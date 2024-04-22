@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Calculator</title>
+    <style>
+        #initializeTestDataBtn {
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="errorMessage" style="color: red; display: none;">La fecha de nacimiento y la edad no coinciden.</div>
+    <div style="margin-bottom: 20px;">
+        <h1>Premium Calculator</h1>
+        <button id="initializeTestDataBtn">Initialize Test Data</button>
+    </div>
+
+    <div>
+        <label for="dateOfBirth">Date of Birth:</label>
+        <input type="date" id="dateOfBirth" name="dateOfBirth">
+    </div>
+
+    <!--<label for="state">State:</label>
+    <select id="state" name="state">
+        <option value="AL">Alabama</option>
+        <option value="AK">Alaska</option>
+    </select>-->
+
+    <div>
+        <label for="state">State:</label>
+        <select id="state" name="state"></select>
+
+        <label for="plan">Plan:</label>
+        <select id="plan" name="plan">
+            <option value="A">Plan A</option>
+            <option value="B">Plan B</option>
+            <option value="C">Plan C</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 40px;">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age">
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div style="margin-bottom: 20px;">
+                <button onclick="calculatePremium()">Get Premium</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <select id="period">
+                    <option value="1">Monthly</option>
+                    <option value="2">Quarterly</option>
+                    <option value="3">Semi-Annually</option>
+                    <option value="4">Annually</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col">
+            <div id="premiumResults">
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var urlProyect = "http://localhost:5282/";
+
+        fetch(urlProyect + 'api/PremiumCalculator/get-states')
+            .then(response => response.json())
+            .then(data => {
+                const selectState = document.getElementById('state');
+                data.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.textContent = state;
+                    selectState.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al obtener los estados:', error));
+
+        document.getElementById("initializeTestDataBtn").addEventListener("click", function () {
+            fetch("http://localhost:5282/api/PremiumCalculator/initialize-test-data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to initialize test data.");
+                    }
+                    alert("Test data initialized successfully!");
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("An error occurred while initializing test data.");
+                });
+        });
+
+        document.getElementById("period").addEventListener("change", function () {
+            calculatePremium();
+        });
+
+        function calculatePremium() {
+            //var dateOfBirth = document.getElementById("dateOfBirth").value;
+            var dateOfBirth = new Date(document.getElementById("dateOfBirth").value);
+            var state = document.getElementById("state").value;
+            var plan = document.getElementById("plan").value;
+            //var age = document.getElementById("age").value;
+            var age = parseInt(document.getElementById("age").value);
+
+            var currentDate = new Date();
+            var ageDiff = currentDate.getFullYear() - dateOfBirth.getFullYear();
+            if (currentDate.getMonth() < dateOfBirth.getMonth() || (currentDate.getMonth() === dateOfBirth.getMonth() && currentDate.getDate() < dateOfBirth.getDate())) {
+                ageDiff--;
+            }
+
+            if (ageDiff !== age) {
+                document.getElementById("errorMessage").style.display = "block";
+                document.getElementById("premiumResults").innerHTML = "";
+            } else {
+                document.getElementById("errorMessage").style.display = "none";
+            }
+
+            var premiumParameters = {
+                DateOfBirth: dateOfBirth,
+                State: state,
+                Age: age,
+                Plan: plan
+            };
+
+            fetch(urlProyect + 'api/PremiumCalculator/get-premiums', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(premiumParameters)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("there has been a problem");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    document.getElementById("premiumResults").innerHTML = "";
+
+                    var period = document.getElementById("period").value;
+
+                    data.forEach(premium => {
+
+                        var annual = premium.premium + 0.0;
+                        var monthly = premium.premium + 0.0;
+
+                        if (period == "1") {
+                            annual = premium.premium * 12;
+                        }
+                        else if (period == "2") {
+                            annual = premium.premium * 4;
+                            monthly = premium.premium / 4;
+                        }
+                        else if (period == "3") {
+                            annual = premium.premium * 2;
+                            monthly = premium.premium / 6;
+                        }
+                        else {
+                            annual = premium.premium;
+                            monthly = premium.premium / 12;
+                        }
+
+                        var premiumDiv = document.createElement("div");
+                        premiumDiv.innerHTML = `
+                                <div>
+                                    <label for="carrier">Carrier:</label>
+                                    <input style="margin-right: 10px;" type="text" id="carrier" value="${premium.carrier}" readonly>
+                                    <label for="premium">Premium:</label>
+                                    <input style="margin-right: 10px;" type="text" id="premium" value="${premium.premium}" readonly>
+                                    <label for="annual">Annual:</label>
+                                    <input style="margin-right: 10px;" type="text" id="annual" value="${annual}" readonly>
+                                    <label for="monthly">Monthly:</label>
+                                    <input style="margin-right: 10px;" type="text" id="monthly" value="${monthly}" readonly>
+                                </div>
+                                `;
+
+                        document.getElementById("premiumResults").appendChild(premiumDiv);
+                    });
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

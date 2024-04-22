@@ -1,4 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PremiumCalculator.Models;
+using PremiumCalculator.Services;
+using System.Globalization;
+using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +13,117 @@ namespace PremiumCalculator.Controllers
     [ApiController]
     public class PremiumCalculatorController : ControllerBase
     {
-        // GET: api/<PremiumCalculatorController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly FileService _fileService;
+
+        public PremiumCalculatorController(IWebHostEnvironment webHostEnvironment, FileService fileService)
         {
-            return new string[] { "value1", "value2" };
+            this._webHostEnvironment = webHostEnvironment;
+            this._fileService = fileService;
+            //this._fileService.InitializeRecords();
         }
 
-        // GET api/<PremiumCalculatorController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("get-premiums")]
+        public IActionResult GetPremiums([FromBody] PremiumParameters premiumParameters)
         {
-            return "value";
+            try
+            {
+                DateTime today = DateTime.Now;
+                int age = today.Year - premiumParameters.DateOfBirth.Year;
+                age = premiumParameters.DateOfBirth.DayOfYear > today.DayOfYear ? age - 1: age;
+
+                if (premiumParameters.Age != age)
+                {
+                    return BadRequest("Incorrect date of birth and age format");
+                }
+
+                IEnumerable<PremiumResult> result = this._fileService.GetPremiums(premiumParameters);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // POST api/<PremiumCalculatorController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("save-premium")]
+        public IActionResult SavePremium([FromBody] PremiumRecord premiumRecord)
         {
+            try
+            {
+                this._fileService.SavePremium(premiumRecord);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // PUT api/<PremiumCalculatorController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("save-premiums")]
+        public IActionResult SavePremiums([FromBody] PremiumRecord premiumRecord)
         {
+            try
+            {
+                this._fileService.SavePremium(premiumRecord);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
-        // DELETE api/<PremiumCalculatorController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpGet("get-states")]
+        public IActionResult GetStates()
         {
+            try
+            {
+                string pathFile = this._webHostEnvironment.ContentRootPath + "\\Files\\states.json";
+                string jsonString = System.IO.File.ReadAllText(pathFile);
+
+                List<string> states = JsonSerializer.Deserialize<List<string>>(jsonString);
+
+                this._fileService.InitializeRecords();
+                return Ok(states);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
+        [HttpGet("get-month-names")]
+        public IActionResult GetMonthNames()
+        {
+            try
+            {
+                CultureInfo culturaEspañola = new CultureInfo("en-EN");
+
+                IEnumerable<string> monthNames = culturaEspañola.DateTimeFormat.MonthNames.Where(m => !m.Equals(""));
+                this._fileService.InitializeRecords();
+                return Ok(monthNames);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("initialize-test-data")]
+        public IActionResult InitializeTestData()
+        {
+            try
+            {
+                this._fileService.InitializeRecords();
+                return Ok("Successful initialization");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

@@ -1,0 +1,146 @@
+[
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A",
+    "State": "NY",
+    "MonthOfBirth": "September",
+    "InitialAgeRange": 21,
+    "FinalAgeRange": 45,
+    "Premium": 150
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "B",
+    "State": "NY",
+    "MonthOfBirth": "January",
+    "InitialAgeRange": 46,
+    "FinalAgeRange": 65,
+    "Premium": 200.5
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A, C",
+    "State": "NY",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 120.99
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A",
+    "State": "AL",
+    "MonthOfBirth": "November",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 85.5
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "C",
+    "State": "AL",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 100
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A",
+    "State": "AK",
+    "MonthOfBirth": "December",
+    "InitialAgeRange": 65,
+    "FinalAgeRange": 120,
+    "Premium": 175.2
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A",
+    "State": "AK",
+    "MonthOfBirth": "December",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 64,
+    "Premium": 125.16
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "B",
+    "State": "AK",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 100.8
+  },
+  {
+    "Carrier": "Qwerty",
+    "Plan": "A, C",
+    "State": "*",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 90
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "A",
+    "State": "NY",
+    "MonthOfBirth": "October",
+    "InitialAgeRange": 21,
+    "FinalAgeRange": 65,
+    "Premium": 150
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "B",
+    "State": "NY",
+    "MonthOfBirth": "January",
+    "InitialAgeRange": 46,
+    "FinalAgeRange": 65,
+    "Premium": 184.5
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "A",
+    "State": "NY",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 129.95
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "A",
+    "State": "AL",
+    "MonthOfBirth": "November",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 84.5
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "B",
+    "State": "WY",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 100
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "B, C",
+    "State": "AK",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 100.8
+  },
+  {
+    "Carrier": "Asdf",
+    "Plan": "A, C",
+    "State": "*",
+    "MonthOfBirth": "*",
+    "InitialAgeRange": 18,
+    "FinalAgeRange": 65,
+    "Premium": 89.99
+  }
+]
